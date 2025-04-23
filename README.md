@@ -1,6 +1,9 @@
 # infer_experiment
 RSeQC infer_experiment written in rust, compiles into a single executable.
 
+# download releases
+[download release](https://github.com/jingangdidi/infer_experiment/releases/tag/v0.1.0)
+
 # usage
 ```
 Usage: infer_experiment -i <input-file> -r <refgene> [-n <sample-size>] [-q <mapq>]
@@ -28,3 +31,6 @@ Fraction of reads failed to determine: 0.0769
 Fraction of reads explained by "1++,1--,2+-,2-+": 0.8897 (0.2380, 0.2076, 0.2069, 0.2371)
 Fraction of reads explained by "1+-,1-+,2++,2--": 0.0334 (0.0074, 0.0091, 0.0092, 0.0077)
 ```
+
+# Related tools
+[RSeQC](https://rseqc.sourceforge.net/#infer-experiment-py)
