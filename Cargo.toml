@@ -1,0 +1,13 @@
+[package]
+name = "infer_experiment"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+argh = { version = "0.1.10" }
+thiserror = { version = "1.0" }
+anyhow = { version = "1.0" }
+rust-htslib = { version = "0.49.0" }
+bio = { version = "2.2.0" }
+bio-types = { version = "1.0.4" }
+flate2 = { version = "1.0" }
