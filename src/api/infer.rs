@@ -178,21 +178,21 @@ pub fn run_infer(bam_file: &Path, ref_bed: &Path, sample_size: usize, q_cut: u8)
         println!("Fraction of reads explained by \"1+-,1-+,2++,2--\": {:.4} ({:.4}, {:.4}, {:.4}, {:.4})", spec2, spec2_each[0], spec2_each[1], spec2_each[2], spec2_each[3]);
     } else if s_strandness.len() > 0 && p_strandness.len() == 0 {
         //spec1 = (s_strandness.get("++").unwrap() + s_strandness.get("--").unwrap()) / s_strandness_sum;
-        if let Some(v) = p_strandness.get("++") {
+        if let Some(v) = s_strandness.get("++") {
             spec1 += v;
             spec1_each[0] = v / s_strandness_sum;
         }
-        if let Some(v) = p_strandness.get("--") {
+        if let Some(v) = s_strandness.get("--") {
             spec1 += v;
             spec1_each[1] = v / s_strandness_sum;
         }
         spec1 /= s_strandness_sum;
         //spec2 = (s_strandness.get("+-").unwrap() + s_strandness.get("-+").unwrap()) / s_strandness_sum;
-        if let Some(v) = p_strandness.get("+-") {
+        if let Some(v) = s_strandness.get("+-") {
             spec2 += v;
             spec2_each[0] = v / s_strandness_sum;
         }
-        if let Some(v) = p_strandness.get("-+") {
+        if let Some(v) = s_strandness.get("-+") {
             spec2 += v;
             spec2_each[1] = v / s_strandness_sum;
         }
@@ -251,3 +251,4 @@ fn is_in_flag(flag: u16, in_: u16) -> bool {
     true
 }
 */
+
