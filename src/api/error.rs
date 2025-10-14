@@ -73,6 +73,10 @@ pub enum MyError {
     #[error("Error - Read bed file {file}: {error}")]
     ReadBedError{file: String, error: anyhow::Error},
 
+    // 读取gtf文件record错误
+    #[error("Error - read gtf {file} record: {error}")]
+    GtfRecordError{file: String, error: io::Error},
+
     // 参数使用错误
     #[error("Error - {para}")]
     ParaError{para: String},
