@@ -1,15 +1,16 @@
 use std::collections::{HashMap, HashSet};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use rust_htslib::bam::{Read, Reader, Record, Header, HeaderView};
 
 use crate::{
     bed::load_bed,
+    gtf::load_gtf,
     error::MyError,
 };
 
 /// 开始分析
-pub fn run_infer(bam_file: &Path, ref_bed: &Path, sample_size: usize, q_cut: u8) -> Result<(), MyError> {
+pub fn run_infer(bam_file: &Path, ref_bed: Option<PathBuf>, gtf: Option<PathBuf>, feature: &str, sample_size: usize, q_cut: u8) -> Result<(), MyError> {
     // 读取bam文件
     //let mut bam_reader = rust_htslib::bam::IndexedReader::from_path(bam_file).map_err(|e| MyError::ReadBamError{file: bam_file.to_str().unwrap().to_string(), error: e})?; // 这样读取会导致下面循环读取record时返回None退出循环
     let mut bam_reader = Reader::from_path(bam_file).map_err(|e| MyError::ReadBamError{file: bam_file.to_str().unwrap().to_string(), error: e})?;
@@ -17,7 +18,11 @@ pub fn run_infer(bam_file: &Path, ref_bed: &Path, sample_size: usize, q_cut: u8)
     let header = Header::from_template(&bam_reader.header());
     let head_view = HeaderView::from_header(&header);
     // 读取指定参考基因bed文件
-    let gene_ranges = load_bed(ref_bed)?; // HashMap<String, IntervalTree>
+    let gene_ranges = match (ref_bed, gtf) { // HashMap<String, IntervalTree>
+        (Some(r), None) => load_bed(&r)?,
+        (None, Some(g)) => load_gtf(&g, feature)?,
+        _ => unreachable!(),
+    };
     // 记录record数量，达到指定的sample_size数量则停止
     let mut count: usize = 0;
     let mut p_strandness: HashMap<String, f64> = HashMap::new(); // key: read_id(1/2) + map_strand(+/-) + strand_from_gene(“:”拼接的基因strand), value: count
@@ -251,4 +256,3 @@ fn is_in_flag(flag: u16, in_: u16) -> bool {
     true
 }
 */
-
