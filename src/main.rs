@@ -15,5 +15,5 @@ fn run() -> Result<(), MyError> {
     let paras = parse_para()?;
 
     // 开始统计
-    run_infer(&paras.input_file, &paras.refgene, paras.sample_size, paras.mapq)
+    run_infer(&paras.input_file, paras.refgene, paras.gtf, &paras.feature, paras.sample_size, paras.mapq)
 }
