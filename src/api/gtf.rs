@@ -30,11 +30,11 @@ pub fn load_bed(ref_bed: &Path) -> Result<HashMap<String, IntervalTree<u64, Stri
     // 存储bed位置和链信息，相同chr存储在一起
     let mut gene_ranges: HashMap<String, IntervalTree<u64, String>> = HashMap::new(); // key: chr, value: IntervalTree
     // 遍历每个record
-    let mut chr: String;
+    let mut chr: &str;
     while let Some(Ok(record)) = records.next() {
-        chr = record.chrom().to_string();
-        if !gene_ranges.contains_key(&chr) {
-            gene_ranges.insert(chr.clone(), IntervalTree::new());
+        chr = record.chrom();
+        if !gene_ranges.contains_key(chr) {
+            gene_ranges.insert(chr.to_string(), IntervalTree::new());
         }
         let strand = match record.strand() {
             Some(s) => match s {
@@ -44,7 +44,7 @@ pub fn load_bed(ref_bed: &Path) -> Result<HashMap<String, IntervalTree<u64, Stri
             },
             None => "*".to_string(),
         };
-        let tree = gene_ranges.get_mut(&chr).unwrap();
+        let tree = gene_ranges.get_mut(chr).unwrap();
         tree.insert(Interval::new(record.start()..record.end()).unwrap(), strand);
     }
     Ok(gene_ranges)
@@ -56,16 +56,21 @@ pub fn load_gtf(gtf: &Path, feature: &str) -> Result<HashMap<String, IntervalTre
     let f = File::open(gtf).map_err(|e| MyError::ReadFileError{file: gtf.to_str().unwrap().to_string(), error: e})?;
     let mut reader = gff::Reader::new(f, gff::GffType::GTF2);
     let mut strand: &str;
+    let mut chr: &str;
     for record in reader.records() {
         let rec = record.map_err(|e| MyError::GtfRecordError{file: gtf.to_str().unwrap().to_string(), error: e.into()})?;
         if rec.feature_type() == feature {
+            chr = rec.seqname();
+            if !gene_ranges.contains_key(chr) {
+                gene_ranges.insert(chr.to_string(), IntervalTree::new());
+            }
             strand = match rec.strand() {
                 Some(Strand::Forward) => "+",
                 Some(Strand::Reverse) => "-",
                 Some(Strand::Unknown) => "",
                 None => "",
             };
-            let tree = gene_ranges.get_mut(rec.seqname()).unwrap();
+            let tree = gene_ranges.get_mut(chr).unwrap();
             tree.insert(Interval::new((*rec.start())..(*rec.end())).unwrap(), strand.to_string());
         }
     }
