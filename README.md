@@ -55,3 +55,8 @@ cargo build --release
 
 # Related tools
 [RSeQC](https://rseqc.sourceforge.net/#infer-experiment-py)
+
+# changelog
+- [2025.10.15] release v0.1.1
+  - ⭐️Add: add -g and -f, support use gtf file
+- [2025.04.23] release v0.1.0
